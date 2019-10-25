@@ -1,0 +1,6 @@
+MX6ULEVK BOARD
+M:	Peng Fan <peng.fan@nxp.com>
+S:	Maintained
+F:	board/freescale/mx6ul_topeet/
+F:	include/configs/mx6ul_topeet.h
+F:	configs/mx6ul_topeet_defconfig
