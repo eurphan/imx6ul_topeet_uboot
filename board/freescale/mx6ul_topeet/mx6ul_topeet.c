@@ -786,14 +786,14 @@ void do_enable_parallel_lcd(struct display_info_t const *dev)
 struct display_info_t const displays[] = {{
 	.bus = MX6UL_LCDIF1_BASE_ADDR,
 	.addr = 0,
-	.pixfmt = 24,
+	.pixfmt = 16,
 	.detect = NULL,
 	.enable	= do_enable_parallel_lcd,
 	.mode	= {
 		.name			= "TFT43AB",
 		.xres           = 480,
 		.yres           = 272,
-		.pixclock       = 108695,
+		.pixclock       = 29850,
 		.left_margin    = 8,
 		.right_margin   = 4,
 		.upper_margin   = 2,
