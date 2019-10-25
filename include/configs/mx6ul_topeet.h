@@ -141,6 +141,9 @@
 	"fdt_addr=0x83000000\0" \
 	"boot_fdt=try\0" \
 	"ip_dyn=yes\0" \
+	"serverip=" CONFIG_ENV_NETWORK_SERVERIP "\0" \
+	"ipaddr=" CONFIG_ENV_NETWORK_IPADDR "\0" \
+	"ethaddr=" CONFIG_ENV_NETWORK_ETHADDR "\0" \
 	"panel=TFT43AB\0" \
 	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
 	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
@@ -310,6 +313,12 @@
 #define CONFIG_ENV_SECT_SIZE		(128 << 10)
 #define CONFIG_ENV_SIZE			CONFIG_ENV_SECT_SIZE
 #endif
+
+/* Network Configs */
+#define CONFIG_ENV_NETWORK_SERVERIP "192.168.10.1"
+#define CONFIG_ENV_NETWORK_IPADDR "192.168.10.2"
+#define CONFIG_ENV_NETWORK_ETHADDR "11:22:33:44:55:66"
+
 
 
 /* USB Configs */
