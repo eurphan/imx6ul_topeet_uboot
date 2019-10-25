@@ -1,0 +1,10 @@
+*.o
+*.o.cmd
+*.cmd
+*.bin
+*.lds
+*.sym
+*.map
+*.imx
+*.su
+*.cfg
