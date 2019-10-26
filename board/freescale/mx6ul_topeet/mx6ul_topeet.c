@@ -862,14 +862,19 @@ int board_late_init(void)
 #endif
 
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
-	setenv("board_name", "EVK");
 
-	if (is_mx6ul_topeet())
-		setenv("board_rev", "TOPEET");
-	else if (is_mx6ul_9x9_evk())
+	if (is_mx6ul_topeet()) {
+		setenv("board_name", "TOPEET");
+		setenv("board_rev", "");
+	}
+	else if (is_mx6ul_9x9_evk()) {
+		setenv("board_name", "EVK");
 		setenv("board_rev", "9X9");
-	else
+	}
+	else {
+		setenv("board_name", "EVK");
 		setenv("board_rev", "14X14");
+	}
 #endif
 
 #ifdef CONFIG_ENV_IS_IN_MMC
