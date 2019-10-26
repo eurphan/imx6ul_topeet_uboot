@@ -130,4 +130,6 @@ defined(CONFIG_MX6DL)) && !defined(CONFIG_MX6SOLO)
 #ifndef CONFIG_MX6SLL
 #define CONFIG_LDO_BYPASS_CHECK
 #endif
+
+#define CONFIG_CMD_MENU
 #endif
