@@ -250,7 +250,9 @@
 
 /* FLASH and environment organization */
 #define CONFIG_SYS_NO_FLASH
-
+#undef CONFIG_BOOTDELAY
+#define CONFIG_BOOTDELAY	0
+#define CONFIG_ZERO_BOOTDELAY_CHECK
 #ifdef CONFIG_SYS_BOOT_QSPI
 #define CONFIG_FSL_QSPI
 #define CONFIG_ENV_IS_IN_SPI_FLASH
