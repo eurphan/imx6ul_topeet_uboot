@@ -32,15 +32,10 @@
 #define is_mx6ul_topeet()	CONFIG_IS_ENABLED(TARGET_MX6UL_TOPEET)
 #define is_mx6ul_9x9_evk()	CONFIG_IS_ENABLED(TARGET_MX6UL_9X9_EVK)
 
-#ifdef CONFIG_TARGET_MX6UL_9X9_EVK
-#define PHYS_SDRAM_SIZE		SZ_256M
-#define CONFIG_BOOTARGS_CMA_SIZE   "cma=96M "
-#else
 #define PHYS_SDRAM_SIZE		SZ_512M
 #define CONFIG_BOOTARGS_CMA_SIZE   ""
 /* DCDC used on 14x14 EVK, no PMIC */
 #undef CONFIG_LDO_BYPASS_CHECK
-#endif
 
 /* SPL options */
 /* We default not support SPL
@@ -66,13 +61,7 @@
 /* MMC Configs */
 #ifdef CONFIG_FSL_USDHC
 #define CONFIG_SYS_FSL_ESDHC_ADDR	USDHC2_BASE_ADDR
-
-/* NAND pin conflicts with usdhc2 */
-#ifdef CONFIG_SYS_USE_NAND
-#define CONFIG_SYS_FSL_USDHC_NUM	1
-#else
 #define CONFIG_SYS_FSL_USDHC_NUM	2
-#endif
 #endif
 
 /* I2C configs */
@@ -93,11 +82,7 @@
 
 #define CONFIG_SYS_MMC_IMG_LOAD_PART	1
 
-#ifdef CONFIG_SYS_BOOT_NAND
-#define CONFIG_MFG_NAND_PARTITION "mtdparts=gpmi-nand:64m(boot),16m(kernel),16m(dtb),1m(misc),-(rootfs) "
-#else
 #define CONFIG_MFG_NAND_PARTITION ""
-#endif
 
 #define CONFIG_MFG_ENV_SETTINGS \
 	"mfgtool_args=setenv bootargs console=${console},${baudrate} " \
@@ -114,22 +99,6 @@
 	"initrd_high=0xffffffff\0" \
 	"bootcmd_mfg=run mfgtool_args;bootz ${loadaddr} ${initrd_addr} ${fdt_addr};\0" \
 
-#if defined(CONFIG_SYS_BOOT_NAND)
-#define CONFIG_EXTRA_ENV_SETTINGS \
-	CONFIG_MFG_ENV_SETTINGS \
-	"panel=TFT43AB\0" \
-	"fdt_addr=0x83000000\0" \
-	"fdt_high=0xffffffff\0"	  \
-	"console=ttymxc0\0" \
-	"bootargs=console=ttymxc0,115200 ubi.mtd=4 "  \
-		"root=ubi0:rootfs rootfstype=ubifs "		     \
-		CONFIG_BOOTARGS_CMA_SIZE \
-		"mtdparts=gpmi-nand:64m(boot),16m(kernel),16m(dtb),1m(misc),-(rootfs)\0"\
-	"bootcmd=nand read ${loadaddr} 0x4000000 0x800000;"\
-		"nand read ${fdt_addr} 0x5000000 0x100000;"\
-		"bootz ${loadaddr} - ${fdt_addr}\0"
-
-#else
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONFIG_MFG_ENV_SETTINGS \
 	"script=boot.scr\0" \
@@ -137,13 +106,14 @@
 	"console=ttymxc0\0" \
 	"fdt_high=0xffffffff\0" \
 	"initrd_high=0xffffffff\0" \
-	"fdt_file=undefined\0" \
+	"fdt_file=imx6ul-topeet.dtb\0" \
 	"fdt_addr=0x83000000\0" \
 	"boot_fdt=try\0" \
-	"ip_dyn=yes\0" \
+	"ip_dyn=no\0" \
 	"serverip=" CONFIG_ENV_NETWORK_SERVERIP "\0" \
 	"ipaddr=" CONFIG_ENV_NETWORK_IPADDR "\0" \
 	"ethaddr=" CONFIG_ENV_NETWORK_ETHADDR "\0" \
+	"nfsdir=/srv/nfs/rootfs\0" \
 	"panel=TFT43AB\0" \
 	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
 	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
@@ -177,7 +147,7 @@
 	"netargs=setenv bootargs console=${console},${baudrate} " \
 		CONFIG_BOOTARGS_CMA_SIZE \
 		"root=/dev/nfs " \
-	"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
+	"nfsroot=${serverip}:${nfsdir}\0" \
 		"netboot=echo Booting from net ...; " \
 		"run netargs; " \
 		"if test ${ip_dyn} = yes; then " \
@@ -201,10 +171,6 @@
 		"fi;\0" \
 		"findfdt="\
 			"if test $fdt_file = undefined; then " \
-				"if test $board_name = EVK && test $board_rev = 9X9; then " \
-					"setenv fdt_file imx6ul-9x9-evk.dtb; fi; " \
-				"if test $board_name = EVK && test $board_rev = 14X14; then " \
-					"setenv fdt_file imx6ul-14x14-evk.dtb; fi; " \
 				"if test $board_name = TOPEET; then " \
 					"setenv fdt_file imx6ul-topeet.dtb; fi; " \
 				"if test $fdt_file = undefined; then " \
@@ -224,7 +190,6 @@
 			   "fi; " \
 		   "fi; " \
 	   "else run netboot; fi"
-#endif
 
 /* Miscellaneous configurable options */
 #define CONFIG_CMD_MEMTEST
@@ -254,16 +219,7 @@
 #undef CONFIG_BOOTDELAY
 #define CONFIG_BOOTDELAY	0
 #define CONFIG_ZERO_BOOTDELAY_CHECK
-#ifdef CONFIG_SYS_BOOT_QSPI
-#define CONFIG_FSL_QSPI
-#define CONFIG_ENV_IS_IN_SPI_FLASH
-#elif defined CONFIG_SYS_BOOT_NAND
-#define CONFIG_SYS_USE_NAND
-#define CONFIG_ENV_IS_IN_NAND
-#else
-#define CONFIG_FSL_QSPI
 #define CONFIG_ENV_IS_IN_MMC
-#endif
 
 #define CONFIG_SYS_MMC_ENV_DEV		1   /* USDHC2 */
 #define CONFIG_SYS_MMC_ENV_PART		0	/* user area */
@@ -271,60 +227,15 @@
 
 #define CONFIG_CMD_BMODE
 
-#ifdef CONFIG_FSL_QSPI
-#define CONFIG_QSPI_BASE		QSPI0_BASE_ADDR
-#define CONFIG_QSPI_MEMMAP_BASE		QSPI0_AMBA_BASE
-
-#define CONFIG_CMD_SF
-#define CONFIG_SPI_FLASH
-#define CONFIG_SPI_FLASH_BAR
-#define CONFIG_SF_DEFAULT_BUS		0
-#define CONFIG_SF_DEFAULT_CS		0
-#define CONFIG_SF_DEFAULT_SPEED	40000000
-#define CONFIG_SF_DEFAULT_MODE		SPI_MODE_0
-#define CONFIG_SPI_FLASH_STMICRO
-#endif
-
-/* NAND stuff */
-#ifdef CONFIG_SYS_USE_NAND
-#define CONFIG_CMD_NAND
-#define CONFIG_CMD_NAND_TRIMFFS
-
-#define CONFIG_NAND_MXS
-#define CONFIG_SYS_MAX_NAND_DEVICE	1
-#define CONFIG_SYS_NAND_BASE		0x40000000
-#define CONFIG_SYS_NAND_5_ADDR_CYCLE
-#define CONFIG_SYS_NAND_ONFI_DETECTION
-
-/* DMA stuff, needed for GPMI/MXS NAND support */
-#define CONFIG_APBH_DMA
-#define CONFIG_APBH_DMA_BURST
-#define CONFIG_APBH_DMA_BURST8
-#endif
-
 #define CONFIG_ENV_SIZE			SZ_8K
 #if defined(CONFIG_ENV_IS_IN_MMC)
 #define CONFIG_ENV_OFFSET		(12 * SZ_64K)
-#elif defined(CONFIG_ENV_IS_IN_SPI_FLASH)
-#define CONFIG_ENV_OFFSET		(768 * 1024)
-#define CONFIG_ENV_SECT_SIZE		(64 * 1024)
-#define CONFIG_ENV_SPI_BUS		CONFIG_SF_DEFAULT_BUS
-#define CONFIG_ENV_SPI_CS		CONFIG_SF_DEFAULT_CS
-#define CONFIG_ENV_SPI_MODE		CONFIG_SF_DEFAULT_MODE
-#define CONFIG_ENV_SPI_MAX_HZ		CONFIG_SF_DEFAULT_SPEED
-#elif defined(CONFIG_ENV_IS_IN_NAND)
-#undef CONFIG_ENV_SIZE
-#define CONFIG_ENV_OFFSET		(60 << 20)
-#define CONFIG_ENV_SECT_SIZE		(128 << 10)
-#define CONFIG_ENV_SIZE			CONFIG_ENV_SECT_SIZE
 #endif
 
 /* Network Configs */
 #define CONFIG_ENV_NETWORK_SERVERIP "192.168.10.1"
 #define CONFIG_ENV_NETWORK_IPADDR "192.168.10.2"
 #define CONFIG_ENV_NETWORK_ETHADDR "11:22:33:44:55:66"
-
-
 
 /* USB Configs */
 #define CONFIG_CMD_USB
