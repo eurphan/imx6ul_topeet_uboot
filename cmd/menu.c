@@ -210,7 +210,7 @@ static int do_menu(void)
 
 U_BOOT_CMD(
 	menu, 1, 1, do_menu,
-	"menu - display a menu, to select the items to do something\n",
+	"menu - display a menu, to select the items to do something",
 	"- display a menu, to select the items to do something, example upgrade the kernel dtb and file system\n"
 	);
 
