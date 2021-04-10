@@ -21,12 +21,12 @@
  * MLO:0-1  1KB
  * U-BOOT:2-2047  1MB-1KB
  * KERNEL:2048-34815  16MB
- * ROOTFS:34816-559103 256MB
+ * ROOTFS:34816-751615 350MB
  */
-#define MLO_WRITE_MMC_SECTOR	0x00
-#define UBOOT_WRITE_MMC_SECTOR	0x02
-#define KERNEL_WRITE_MMC_SECTOR 0x800
-#define ROOTFS_WRITE_MMC_SECTOR 0x8800
+#define MLO_WRITE_MMC_SECTOR_START      0x00
+#define UBOOT_WRITE_MMC_SECTOR_START	0x02
+#define KERNEL_WRITE_MMC_SECTOR_START   0x800
+#define ROOTFS_WRITE_MMC_SECTOR_START   0x8800
 
 #ifdef CONFIG_GENERIC_MMC
 
@@ -112,13 +112,13 @@ static int do_menu(void)
 				size = size / 512 + 1;
 			else
 				size = size / 512;
-			sprintf(cmd_buff, "mmc erase %x %d", MLO_WRITE_MMC_SECTOR, size + 2); /* Erase the u-boot and MLO partition */
+			sprintf(cmd_buff, "mmc erase %x %d", MLO_WRITE_MMC_SECTOR_START, size + 2); /* Erase the u-boot and MLO partition */
 			if (run_command(cmd_buff, 0))
 			{
 				printf("MMC device erase failure!\n");
 				break;
 			}
-			sprintf(cmd_buff, "mmc write %x %x %d", TFTP_SAVE_RAM_ADDR, UBOOT_WRITE_MMC_SECTOR, size); /* Write the u-boot file to mmc device */
+			sprintf(cmd_buff, "mmc write %x %x %d", TFTP_SAVE_RAM_ADDR, UBOOT_WRITE_MMC_SECTOR_START, size); /* Write the u-boot file to mmc device */
 			if (run_command(cmd_buff, 0))
 			{
 				printf("MMC device write failure!\n");
@@ -130,7 +130,7 @@ static int do_menu(void)
 				printf("Get the MLO file failure!\n");
 				break;
 			}
-			sprintf(cmd_buff, "mmc write %x %x 2", TFTP_SAVE_RAM_ADDR, MLO_WRITE_MMC_SECTOR); /* Write the MLO file to mmc device */
+			sprintf(cmd_buff, "mmc write %x %x 2", TFTP_SAVE_RAM_ADDR, MLO_WRITE_MMC_SECTOR_START); /* Write the MLO file to mmc device */
 			if (run_command(cmd_buff, 0))
 			{
 				printf("MMC device write failure!\n");
@@ -152,13 +152,13 @@ static int do_menu(void)
 				size = size / 512 + 1;
 			else
 				size = size / 512;
-			sprintf(cmd_buff, "mmc erase %x %x", KERNEL_WRITE_MMC_SECTOR, size);
+			sprintf(cmd_buff, "mmc erase %x %x", KERNEL_WRITE_MMC_SECTOR_START, size);
 			if (run_command(cmd_buff, 0))
 			{
 				printf("MMC device erase failure!\n");
 				break;
 			}
-			sprintf(cmd_buff, "mmc write %x %x %x", TFTP_SAVE_RAM_ADDR, KERNEL_WRITE_MMC_SECTOR, size);
+			sprintf(cmd_buff, "mmc write %x %x %x", TFTP_SAVE_RAM_ADDR, KERNEL_WRITE_MMC_SECTOR_START, size);
 			if (run_command(cmd_buff, 0))
 			{
 				printf("MMC device write failure");
@@ -180,13 +180,13 @@ static int do_menu(void)
 				size = size / 512 + 1;
 			else
 				size = size / 512;
-			sprintf(cmd_buff, "mmc erase %x %x", ROOTFS_WRITE_MMC_SECTOR, size);
+			sprintf(cmd_buff, "mmc erase %x %x", ROOTFS_WRITE_MMC_SECTOR_START, size);
 			if (run_command(cmd_buff, 0))
 			{
 				printf("MMC device erase failure!\n");
 				break;
 			}
-			sprintf(cmd_buff, "mmc write %x %x %x", TFTP_SAVE_RAM_ADDR, ROOTFS_WRITE_MMC_SECTOR, size);
+			sprintf(cmd_buff, "mmc write %x %x %x", TFTP_SAVE_RAM_ADDR, ROOTFS_WRITE_MMC_SECTOR_START, size);
 			if (run_command(cmd_buff, 0))
 			{
 				printf("MMC device write failure");
