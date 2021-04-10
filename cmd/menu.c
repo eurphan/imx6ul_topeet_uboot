@@ -97,7 +97,7 @@ static int do_menu(void)
 			break;
 		case 'u': /* Download the u-boot */
 		case 'U':
-			sprintf(cmd_buff, "mmc partconf %d 1 7 1", device);
+			sprintf(cmd_buff, "mmc partconf %d 1 7 1", device); /* 1:boot1 2:boot2 7:userdata */
 			run_command(cmd_buff, 0);
 			sprintf(cmd_buff, "tftp %x u-boot.imx", TFTP_SAVE_RAM_ADDR); /* Get the u-boot.imx file */
 			if (run_command(cmd_buff, 0))
@@ -112,7 +112,7 @@ static int do_menu(void)
 				size = size / 512 + 1;
 			else
 				size = size / 512;
-			sprintf(cmd_buff, "mmc erase %x %x", MLO_WRITE_MMC_SECTOR, size + 2); /* Erase the u-boot and MLO partition */
+			sprintf(cmd_buff, "mmc erase %x %d", MLO_WRITE_MMC_SECTOR, size + 2); /* Erase the u-boot and MLO partition */
 			if (run_command(cmd_buff, 0))
 			{
 				printf("MMC device erase failure!\n");
@@ -167,14 +167,14 @@ static int do_menu(void)
 			break;
 		case 'f': /* Download the root file system */
 		case 'F':
-			sprintf(cmd_buff, "tftp %x rootfs.ext3", TFTP_SAVE_RAM_ADDR); /* Get kernel.vfat file */
+			sprintf(cmd_buff, "tftp %x rootfs.ext4", TFTP_SAVE_RAM_ADDR); /* Get kernel.vfat file */
 			if (run_command(cmd_buff, 0))
 			{
-				printf("Get rootfs.ext3 failure!\n");
+				printf("Get rootfs.ext4 failure!\n");
 				break;
 			}
 			tmpp = tmp;
-			tmpp = getenv("filesize"); /* Get the rootfs.ext3 file size */
+			tmpp = getenv("filesize"); /* Get the rootfs.ext4 file size */
 			size = (int)simple_strtoul(tmpp, NULL, 16);
 			if (size % 512)
 				size = size / 512 + 1;
