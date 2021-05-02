@@ -11,7 +11,7 @@
 #include <mmc.h>
 
 /* The buffer address for save file for tftp command */
-#define TFTP_SAVE_RAM_ADDR 0x88000000
+#define TFTP_SAVE_RAM_ADDR 0x80000000
 
 /* The u-boot file max size (KB) */
 #define UBOOT_FILE_MAX_SIZE 512
@@ -21,7 +21,7 @@
  * MLO:0-1  1KB
  * U-BOOT:2-2047  1MB-1KB
  * KERNEL:2048-34815  16MB
- * ROOTFS:34816-751615 350MB
+ * ROOTFS:34816-956415 450MB
  */
 #define MLO_WRITE_MMC_SECTOR_START      0x00
 #define UBOOT_WRITE_MMC_SECTOR_START	0x02
